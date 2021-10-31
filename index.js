@@ -59,11 +59,25 @@ async function run() {
             const result = await serviceCollection.deleteOne(query);
             res.json(result);
         })
+        // DELETE API from orderCollection
+        app.delete('/allOrders/:id', async (req, res) => {
+            const id = req.params.id;
+            console.log('deleted id', id);
+            const query = { _id: ObjectId(id) };
+            const result = await orderCollection.deleteOne(query);
+            res.json(result);
+        })
         // POST API for placing order
         app.post('/orders', async (req, res) => {
             const order = req.body;
             const result = await orderCollection.insertOne(order);
             res.json(result);
+        });
+        // GET API of all orders 
+        app.get('/allOrders', async (req, res) => {
+            const cursor = orderCollection.find({});
+            const services = await cursor.toArray();
+            res.send(services);
         })
 
     }
@@ -74,7 +88,7 @@ async function run() {
 run().catch(console.dir);
 
 app.get('/', (req, res) => {
-    res.send('Hello World!')
+    res.send('Picnic Spot Booking server is Running');
 })
 
 app.listen(port, () => {
