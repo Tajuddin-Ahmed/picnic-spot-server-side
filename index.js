@@ -18,6 +18,7 @@ async function run() {
         await client.connect();
         const database = client.db('picnicSpot');
         const serviceCollection = database.collection('services');
+        const orderCollection = database.collection('orders');
 
         // GET API
 
@@ -49,6 +50,20 @@ async function run() {
             const query = { _id: ObjectId(id) };
             const service = await serviceCollection.findOne(query);
             res.json(service);
+        });
+        // DELETE API 
+        app.delete('/services/:id', async (req, res) => {
+            const id = req.params.id;
+            console.log('deleted id', id);
+            const query = { _id: ObjectId(id) };
+            const result = await serviceCollection.deleteOne(query);
+            res.json(result);
+        })
+        // POST API for placing order
+        app.post('/orders', async (req, res) => {
+            const order = req.body;
+            const result = await orderCollection.insertOne(order);
+            res.json(result);
         })
 
     }
